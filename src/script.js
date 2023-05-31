@@ -20,18 +20,29 @@ const scene = new THREE.Scene()
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128)
+const wavesGeometry = new THREE.PlaneGeometry(2, 2, 128, 128)
 
 // Material
-const waterMaterial = new THREE.ShaderMaterial({
+const wavesMaterial = new THREE.ShaderMaterial({
     vertexShader: waveVertexShader,
-    fragmentShader: waveFragmentShader
+    fragmentShader: waveFragmentShader,
+    uniforms: {
+        uLargeWavesElevation: {value: 0.2},
+        uLargeWavesFrequency: {value: new THREE.Vector2(4, 1.5)},
+        uTime: {value: 0},
+        uLargeWavesSpeed: {value: 0.75}
+    }
 })
 
+gui.add(wavesMaterial.uniforms.uLargeWavesElevation, 'value').min(0).max(1).step(0.001).name('uLargeWavesElevation')
+gui.add(wavesMaterial.uniforms.uLargeWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uLargeWavesFrequencyX')
+gui.add(wavesMaterial.uniforms.uLargeWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uLargeWavesFrequencyY')
+gui.add(wavesMaterial.uniforms.uLargeWavesSpeed, 'value').min(0).max(1).step(0.001).name('uLargeWavesSpeed')
+
 // Mesh
-const water = new THREE.Mesh(waterGeometry, waterMaterial)
-water.rotation.x = - Math.PI * 0.5
-scene.add(water)
+const waves = new THREE.Mesh(wavesGeometry, wavesMaterial)
+waves.rotation.x = - Math.PI * 0.5
+scene.add(waves)
 
 /**
  * Sizes
@@ -85,6 +96,8 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    wavesMaterial.uniforms.uTime.value = elapsedTime;
 
     // Update controls
     controls.update()
