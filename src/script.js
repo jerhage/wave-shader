@@ -9,6 +9,7 @@ import waveFragmentShader from './shaders/waves/fragment.glsl'
  */
 // Debug
 const gui = new dat.GUI({ width: 340 })
+const debug = {}
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -22,6 +23,9 @@ const scene = new THREE.Scene()
 // Geometry
 const wavesGeometry = new THREE.PlaneGeometry(2, 2, 128, 128)
 
+debug.depthColor = '#0087a8'
+debug.surfaceColor = '#7cbbda'
+
 // Material
 const wavesMaterial = new THREE.ShaderMaterial({
     vertexShader: waveVertexShader,
@@ -30,7 +34,11 @@ const wavesMaterial = new THREE.ShaderMaterial({
         uLargeWavesElevation: {value: 0.2},
         uLargeWavesFrequency: {value: new THREE.Vector2(4, 1.5)},
         uTime: {value: 0},
-        uLargeWavesSpeed: {value: 0.75}
+        uLargeWavesSpeed: {value: 0.75},
+        uDepthColor: { value: new THREE.Color(debug.depthColor)},
+        uSurfaceColor: { value: new THREE.Color(debug.surfaceColor)},
+        uColorOffset: { value: 0.25 },
+        uColorMultiplier: { value: 2 },
     }
 })
 
@@ -38,7 +46,14 @@ gui.add(wavesMaterial.uniforms.uLargeWavesElevation, 'value').min(0).max(1).step
 gui.add(wavesMaterial.uniforms.uLargeWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uLargeWavesFrequencyX')
 gui.add(wavesMaterial.uniforms.uLargeWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uLargeWavesFrequencyY')
 gui.add(wavesMaterial.uniforms.uLargeWavesSpeed, 'value').min(0).max(1).step(0.001).name('uLargeWavesSpeed')
-
+gui.addColor(debug, 'depthColor').onChange(() => {
+    wavesMaterial.uniforms.uDepthColor.value.set(debug.depthColor)
+})
+gui.addColor(debug, 'surfaceColor').onChange(() => {
+    wavesMaterial.uniforms.uSurfaceColor.value.set(debug.surfaceColor)
+})
+gui.add(wavesMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset')
+gui.add(wavesMaterial.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier')
 // Mesh
 const waves = new THREE.Mesh(wavesGeometry, wavesMaterial)
 waves.rotation.x = - Math.PI * 0.5

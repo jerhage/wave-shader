@@ -3,6 +3,7 @@ uniform vec2 uLargeWavesFrequency;
 uniform float uTime;
 uniform float uLargeWavesSpeed;
 
+varying float vElevation;
 void main() {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
 
@@ -10,6 +11,7 @@ void main() {
                   sin(modelPosition.z * uLargeWavesFrequency.y + uTime * uLargeWavesSpeed) *
                   uLargeWavesElevation;
 
+    vElevation = elevation;
 
     modelPosition.y += elevation;
     vec4 viewPosition = viewMatrix * modelPosition;
